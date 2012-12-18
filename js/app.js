@@ -33,10 +33,14 @@
       var thisApp = this;
       var slide;
       
-      $('#slides .slide').each(function() {
+      // Read in template text
+      this.slideTemplate = $('#slide-container-template').html();
+      this.$slideTemplate = $(this.slideTemplate);
+      
+      this.$slideTemplate.find('.slide').each(function() {
         slide = new Slide;
-        slide.set('el',  $(this));
-        slide.set('slideNum',  thisApp.slideCount);
+        slide.set('template', $(this));
+        slide.set('slideNum', thisApp.slideCount);
         
         // Get image
         if ($(this).attr('data-image') !== undefined && $(this).attr('data-image') != '') {
@@ -146,7 +150,7 @@
         
           this.currentSlideObj = slideToShow[0];
           $('#current-slide-container').html(
-            _.template(this.currentSlideObj.get('el').html(), this.currentSlideObj.toJSON()));
+            _.template(this.currentSlideObj.get('template').html(), this.currentSlideObj.toJSON()));
 
           if (this.currentSlideObj.get('iframe')) {
             this.showIFrame();
