@@ -47,14 +47,6 @@
           slide.set('image', $(this).attr('data-image'));
         }
         
-        // Get iframe
-        if ($(this).attr('data-iframe') !== undefined) {
-          slide.set('iframe', $(this).attr('data-iframe'));
-        }
-        if ($(this).attr('data-iframe-location') !== undefined) {
-          slide.set('iframe-location', $(this).attr('data-iframe-location'));
-        }
-        
         thisApp.slides.add(slide);
         thisApp.slideCount++;
       });
@@ -102,22 +94,6 @@
       this.windowHeight = $(window).outerHeight(true);
     },
     
-    showIFrame: function() {
-      var thisApp = this;
-      var iframe = $('<iframe>').attr('height', '100%')
-        .attr('id', 'slide-iframe')
-        .attr('name', 'slide-iframe-named')
-        .attr('width', '100%')
-        .attr('frameborder', '0')
-        .attr('src', this.currentSlideObj.get('iframe'));
-        
-      $('#current-slide-container').append($('<div class="iframe-spacer">'));
-      $('#current-slide-container').append(iframe);
-        
-      // Doesn't seem to work
-      //$('#slide-iframe').contents().find("html, body").animate({ scrollTop: 500 }, 100);
-    },
-    
     showCurrentSlide: function() {
       this.showSlide(this.currentSlide);
     },
@@ -151,10 +127,6 @@
           this.currentSlideObj = slideToShow[0];
           $('#current-slide-container').html(
             _.template(this.currentSlideObj.get('template').html(), this.currentSlideObj.toJSON()));
-
-          if (this.currentSlideObj.get('iframe')) {
-            this.showIFrame();
-          }
 
           this.expandText();
           this.setBackground();
