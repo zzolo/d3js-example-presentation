@@ -1,0 +1,73 @@
+/**
+ * CSS for slides
+ */
+body {
+  font-family: 'Open Sans', sans-serif;
+  font-weight: bold;
+}
+
+a, a:hover, a:visited {
+  text-decoration: none;
+  color: #1A53FF;
+}
+
+#current-slide-container {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  padding: 0;
+  margin: 0;
+  background-position: center center;
+  background-repeat: no-repeat;
+	-webkit-background-size: cover;
+	-moz-background-size: cover;
+	-o-background-size: cover;
+	background-size: cover;
+}
+
+#slides {
+  display: none;
+}
+
+#current-slide-container p {
+  position: absolute;
+  top: 0;
+  left: 0;
+	word-wrap: break-word;
+	width: auto;
+	height: auto;
+  margin: 0;
+  padding: 2%;
+}
+
+.center {
+  text-align: center;
+}
+
+.right {
+  text-align: right;
+}
+
+.justify {
+  text-align: justify;
+}
+
+.light-text {
+  color: #FFFFFF;
+}
+
+.medium-text {
+  color: #838383;
+}
+
+.shadowed-text {
+  text-shadow: 2px 2px 3px #9B9B9B;
+}
+
+.iframe-spacer {
+  height: 15px;
+  width: 100%;
+  border-bottom: 2px solid #232323;
+}
