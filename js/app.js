@@ -46,6 +46,9 @@
         if ($(this).attr('data-image') !== undefined && $(this).attr('data-image') != '') {
           slide.set('image', $(this).attr('data-image'));
         }
+        if ($(this).attr('data-code-highlight') !== undefined && $(this).attr('data-code-highlight') != '') {
+          slide.set('codeHighlight', $(this).attr('data-code-highlight'));
+        }
         
         thisApp.slides.add(slide);
         thisApp.slideCount++;
@@ -64,15 +67,33 @@
     expandText: function() {
       this.getDimensions();
       
-      var $text = $('#current-slide-container p');
+      var $text = $('#current-slide-container');
       var size = (this.windowHeight * 3);
       $text.css('font-size', size + 'px');
+      
+      var childrenH = 0;
+      $('#current-slide-container').children().each(function() {
+        childrenH = childrenH + $(this).outerHeight();
+      });
+      var childrenW = 0;
+      $('#current-slide-container').children().each(function() {
+        childrenW = childrenW + $(this).outerHeight();
+      });
 
       while (
-        $text.outerHeight(true) > this.windowHeight ||
-        $text.outerWidth(true) > this.windowWidth) {
+        childrenH > this.windowHeight ||
+        childrenW > this.windowWidth) {
         size -= 30;
         $text.css('font-size', size + 'px');
+        
+        childrenH = 0;
+        $('#current-slide-container').children().each(function() {
+          childrenH = childrenH + $(this).outerHeight();
+        });
+        childrenW = 0;
+        $('#current-slide-container').children().each(function() {
+          childrenW = childrenW + $(this).outerHeight();
+        });
       }
     },
     
@@ -128,6 +149,10 @@
           $('#current-slide-container').html(
             _.template(this.currentSlideObj.get('template').html(), this.currentSlideObj.toJSON()));
 
+          if (this.currentSlideObj.get('codeHighlight')) {
+            $('#current-slide-container pre code').each(function(i, e) {hljs.highlightBlock(e)});
+          }
+          
           this.expandText();
           this.setBackground();
           this.navSlide(slide);
