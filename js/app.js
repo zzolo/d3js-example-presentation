@@ -68,8 +68,8 @@
       this.getDimensions();
       
       var $text = $('#current-slide-container');
-      var size = (this.windowHeight * 3);
-      $text.css('font-size', size + 'px');
+      var size = 30; //(this.windowHeight * 3);
+      $text.css('font-size', size + 'em');
       
       var childrenH = 0;
       $('#current-slide-container').children().each(function() {
@@ -83,8 +83,8 @@
       while (
         childrenH > this.windowHeight ||
         childrenW > this.windowWidth) {
-        size -= 10;
-        $text.css('font-size', size + 'px');
+        size -= 0.5;
+        $text.css('font-size', size + 'em');
         
         childrenH = 0;
         $('#current-slide-container').children().each(function() {

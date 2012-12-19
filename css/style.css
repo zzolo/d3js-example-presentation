@@ -29,6 +29,7 @@ pre {
 	-moz-background-size: cover;
 	-o-background-size: cover;
 	background-size: cover;
+	display: inline-block;
 }
 
 #slides {
