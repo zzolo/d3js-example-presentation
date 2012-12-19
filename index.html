@@ -36,12 +36,207 @@
       <div class="slide" data-image="img/bird-prey.jpg">
         <p class="light-text shadowed-text">@zzolo</p>
       </div>
+      <div class="slide" data-image="">
+        <p class="shadowed-text">Include jQuery, jQuery.jsonp, underscore.js, D3.js</p>
+      </div>
+      
+      <div class="slide" data-code-highlight="javascript">
+        <pre><code class="xml">
+&lt;!doctype html&gt;
+&lt;html class="no-js" lang="en"&gt;
+  &lt;head&gt;
+  &lt;/head&gt;
+  
+  &lt;body&gt;
+    &lt;div class="counter-container"&gt;&lt;/div&gt;
+    &lt;div id="d3-chart-container"&gt;&lt;/div&gt;
+  &lt;/body&gt;
+&lt;/html&gt;
+        </code></pre>
+      </div>
       
       <div class="slide" data-code-highlight="javascript">
         <pre><code class="javascript">
-var this = undefined;
+(function($, w, undefined) {
+  $.jsonp({
+    url: dataURL,
+    success: processData,
+    error: function(e) {
+      // Show error here
+    }
+  });
+})(jQuery, window);
         </code></pre>
       </div>
+      
+      <div class="slide" data-code-highlight="javascript">
+        <pre><code class="javascript">
+// Main function
+var processData = function(data) {
+  var recent = data;
+  var voterMax = (_.max(recent, function(r) { return r.voters; })).voters;
+  var selectedDefault = [ 'Hennepin', 'Ramsey', 'Dakota', 'Anoka', 'Washington' ];
+  
+  // Select defaults
+  recent = _.map(recent, function(r) {
+    r.selected = (_.contains(selectedDefault, r.county)) ? true : false;
+    return r;
+  });
+};
+        </code></pre>
+      </div>
+      
+      <div class="slide" data-code-highlight="javascript">
+        <pre><code class="javascript">
+// Convert data to use in pack
+var recentPack = {
+  'name': 'Counties',
+  'children': recent,
+  'county': 'top-level'
+};
+        </code></pre>
+      </div>
+      
+      <div class="slide" data-code-highlight="javascript">
+        <pre><code class="javascript">
+// Create color scale
+var colorRange = d3.scale.linear()
+  .domain(d3.range(1, voterMax, 10000))
+  .range(['#26C318', '#33B342', '#40A36C', ...])
+  .clamp(true);
+        </code></pre>
+      </div>
+      
+      <div class="slide" data-code-highlight="javascript">
+        <pre><code class="javascript">
+// Number formater
+var numFormater = d3.format(',d');
+        </code></pre>
+      </div>
+      
+      <div class="slide" data-code-highlight="javascript">
+        <pre><code class="javascript">
+var $container = $('#d3-chart-container');
+var w = $container.width();
+var h = $container.height();
+
+// Pack layout
+var pack = d3.layout.pack().size([w - 5, h - 5]).padding(8)
+  .sort(function(a, b) { return b.voters - a.voters; } )
+  .value(function(d) { return d.voters; } );
+var packedData = pack.nodes(recentPack).filter(function(d) { return !d.children; });
+        </code></pre>
+      </div>
+      
+      <div class="slide" data-code-highlight="javascript">
+        <pre><code class="javascript">
+// Create svg canvas
+var svg = d3.select('#d3-chart-container').append('svg')
+  .attr('width', w).attr('height', h).attr('class', 'county-chart');
+        </code></pre>
+      </div>
+      
+      <div class="slide" data-code-highlight="javascript">
+        <pre><code class="javascript">
+// Function to handle update of data
+var dataHandler = function(data) {
+  ...
+};
+
+// Start off with data
+dataHandler(packedData);
+        </code></pre>
+      </div>
+      
+      <div class="slide" data-code-highlight="javascript">
+        <pre><code class="javascript">
+// Create node for groups of items, identify by county
+var nodes = svg.selectAll('g.countyNode').data(data, function(d) { return d.county; });
+        </code></pre>
+      </div>
+      
+      <div class="slide" data-code-highlight="javascript">
+        <pre><code class="javascript">
+// Update all.  Add circle to nodes.
+nodes.selectAll('circle')
+  .style('stroke', function(d) {
+    return (!_.isUndefined(d.selected) && d.selected === true) ? '#222222' : 'transparent';
+  });
+        </code></pre>
+      </div>
+      
+      <div class="slide" data-code-highlight="javascript">
+        <pre><code class="javascript">
+// Enter, update only new elements
+var nodesEnter = nodes.enter().append('g');
+        </code></pre>
+      </div>
+      
+      <div class="slide" data-code-highlight="javascript">
+        <pre><code class="javascript">
+// Add countyNode class and move to correct location
+nodesEnter.attr('class', 'countyNode')
+  .attr('transform', function(d) { return 'translate(' + d.x + ',' + d.y + ')'; });
+        </code></pre>
+      </div>
+      
+      <div class="slide" data-code-highlight="javascript">
+        <pre><code class="javascript">
+// Add our circle      
+nodesEnter.append('circle')
+  .attr('r', function(d) { return d.r; })
+  .style('fill', function(d) { return colorRange(d.voters); })
+  .style('stroke-width', 3)
+  .style('stroke', function(d) {
+    return (!_.isUndefined(d.selected) && d.selected === true) ? '#222222' : 'transparent';
+  });
+        </code></pre>
+      </div>
+      
+      <div class="slide" data-code-highlight="javascript">
+        <pre><code class="javascript">
+// Add our text
+nodesEnter.append('text')
+  .attr('text-anchor', 'middle')
+  .attr('dy', '.3em')
+  .style('fill', '#333333')
+  .text(function(d) { 
+    return d.county.substring(0, (Math.floor(d.r / 5) === 1) ? 0 : Math.floor(d.r / 5));
+  });
+        </code></pre>
+      </div>
+      
+      <div class="slide" data-code-highlight="javascript">
+        <pre><code class="javascript">     
+// Rollover
+nodesEnter.on('mouseover', function(d, i) {
+  d3.select(this).style('cursor', 'pointer');
+  var color = d3.rgb(d3.select(this).select('circle').style('fill'));
+  d3.select(this).select('circle').style('fill', color.brighter().toString());
+});
+// Rollout
+nodesEnter.on('mouseout', function(d, i) {
+  var color = d3.rgb(d3.select(this).select('circle').style('fill'));
+  d3.select(this).select('circle').style('fill', color.darker().toString());
+});
+        </code></pre>
+      </div>
+      
+      <div class="slide" data-code-highlight="javascript">
+        <pre><code class="javascript">
+// Click event
+nodesEnter.on('click', function(d, i) {
+  packedData = _.map(packedData, function(p) {
+    if (p.county === d.county) {
+      p.selected = (!_.isUndefined(p.selected) && p.selected === true) ? false: true;
+    }
+    return p;
+  });
+  dataHandler(packedData);
+});
+        </code></pre>
+      </div>
+      
       
       <div class="slide" data-image="img/bunny-clapping.jpg">
         <p class="light-text shadowed-text">Thank you</p>

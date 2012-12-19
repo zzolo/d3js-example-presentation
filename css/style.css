@@ -11,6 +11,10 @@ a, a:hover, a:visited {
   color: #1A53FF;
 }
 
+pre {
+  margin: 0;
+}
+
 #current-slide-container {
   position: absolute;
   top: 0;

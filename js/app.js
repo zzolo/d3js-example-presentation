@@ -83,7 +83,7 @@
       while (
         childrenH > this.windowHeight ||
         childrenW > this.windowWidth) {
-        size -= 30;
+        size -= 10;
         $text.css('font-size', size + 'px');
         
         childrenH = 0;
